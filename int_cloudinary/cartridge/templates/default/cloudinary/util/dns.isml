@@ -1,0 +1,7 @@
+<isif condition="${'CloudinaryEnabled' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.CloudinaryEnabled}">
+	<link rel="preconnect" href="//example.com">
+	<link rel="preconnect" href="//cdn.example.com" crossorigin>
+	<!--[if lt IE 9]>
+	<link rel="dns-prefetch" href="//example.com">
+	<![endif]-->
+</isif>

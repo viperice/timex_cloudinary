@@ -1,0 +1,44 @@
+<iscontent type="text/html" charset="UTF-8" compact="true"/>
+<isset name="cloudinaryData" value="${require('~/cartridge/scripts/data/cloudinaryData')}" scope="page" />
+<isif condition="${cloudinaryData.isCloudinaryEnabled()}">
+
+<isset name="cloudinaryURLgenerator" value="${require('int_cloudinary/cartridge/scripts/lib/URLgenerator')}" scope="page" />
+
+<video
+  id='cloudinary-video-player-<isprint value="${pdict.counter}" />'
+  controls=false
+  data-cld-autoplay-mode="on-scroll"
+  data-cld-public-id='<isprint value="${cloudinaryURLgenerator.getProductVideoPublicId(pdict.video)}" />'
+  data-cld-transformation='{ "streaming_profile": "sfcc" }'
+  data-cld-source-types='["hls", "mp4"]'
+  class="cld-video-player">
+</video>
+
+<isset name="cname" value="${cloudinaryData.getCloudinaryCNAME()}" scope="page" />
+
+<isif condition="${cname && cname != ''}">
+
+	<script>
+	
+	var cld = cloudinary.Cloudinary.new({ cloud_name: '<isprint value="${cloudinaryData.getCloudName()}" />', private_cdn: '<isprint value="${cname}" />', secure_distribution: '<isprint value="${cname}" />', secure: true});
+	var demoplayer = cld.videoPlayer('cloudinary-video-player-<isprint value="${pdict.counter}" />');
+	
+	</script>
+
+<iselse>
+
+	<script>
+	
+	var cld = cloudinary.Cloudinary.new({ cloud_name: '<isprint value="${cloudinaryData.getCloudName()}" />', secure: true});
+	var demoplayer = cld.videoPlayer('cloudinary-video-player-<isprint value="${pdict.counter}" />');
+	
+	</script>
+
+</isif>
+
+<iselse>
+	<video width="${pdict.width}" controls>
+	  <source src="${pdict.video.getURL())}" type="video/mp4">
+	  Your browser does not support HTML5 video.
+	</video>
+</isif>

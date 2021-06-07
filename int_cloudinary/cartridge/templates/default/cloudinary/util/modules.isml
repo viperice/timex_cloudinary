@@ -1,0 +1,7 @@
+<ismodule template="cloudinary/video/productvideo"
+	name="cloudinaryproductvideo"
+	attribute="product"
+	attribute="video"
+	attribute="width"
+	attribute="counter"
+/>

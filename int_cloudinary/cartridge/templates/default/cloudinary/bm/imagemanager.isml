@@ -1,0 +1,169 @@
+<!--- TEMPLATENAME: index.isml --->
+
+<isdecorate template="application/MenuFrame">
+    <iscontent type="text/html" charset="UTF-8" />
+    <isinclude template="inc/Modules"/>
+    <isset name="instanceType" value="${require('dw/system/System').instanceType === 2 ? 'live' : 'test'}" scope="page"/>
+    <isset name="prefs" value="${URLUtils.url('SiteNavigationBar-ShowMenuitemOverview', 'CurrentMenuItemId', 'cloudinary-menu-item')}" scope="PAGE" />
+    <ISBreadcrumb name1="Cloudinary" url1="${prefs}" name2="Assets Manager" />
+    
+    
+    <style>
+        .image-manager {
+            border-collapse: collapse;
+            border: 0;
+            cellpadding: 0;
+            cellspacing: 0;
+            width: 100%;
+        }
+        .image-manager th {
+            background-color: #eee;
+            color: #54585a;
+            text-align: left;
+            padding: 5px;
+            border: 1px solid #dadada;
+        }
+        .image-manager td {
+            border: 1px solid #dadada;
+            padding: 10px;
+            vertical-align: top;
+            width: 100%;
+        }
+        .image-manager td:first-child, 
+        .image-manager td:last-child {
+            width: auto;
+        }
+        .image-manager img {
+            width: 100px;
+            height: 100px;
+        }
+        .bb {
+            border-bottom: 1px solid #dadada;
+        }
+        .upload-section {
+            margin-bottom: 15px;
+        }
+        .upload-section input {
+            border: 1px solid #dadada;
+        }
+        .infobox-border {
+            border: 1px solid #dadada;
+            border-bottom: 0;
+            padding: 10px;
+        }
+        .im-nav-wrap {
+            text-align: right;
+            margin-top: 30px;
+        }
+        .im-nav__item {
+            list-style: none;
+            display: inline-block;
+        }
+        .im-nav__item button {
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: transparent;
+            color: #00629b;
+            cursor: pointer;
+        }
+        .im-nav__item.active button {
+            background-color: #00629b;
+            color: #fff;
+            cursor: default;
+        }
+        .im-nav__item.hidden button {
+            display: none;
+        }
+       
+        
+    </style>
+
+
+   <h1 class="table_title bb">Assets Manager</h1>
+	<isif condition="${!empty(pdict.result)}">
+		${pdict.result}<br/>
+	</isif>
+		
+    <form action="${URLUtils.url('Cloudinary-Upload')}" enctype="multipart/form-data" method="POST">
+        <div class="upload-section">
+        	<input type="file" name="${pdict.CurrentForms.upload.file.htmlName}" accept="video/*,image/*"/>
+            <button type="submit" name="${pdict.CurrentForms.upload.submit.htmlName}" class="button">Upload new media asset</button>
+        </div>
+    </form>
+
+    <form action="${URLUtils.url('Cloudinary-ImageManager')}">
+        <div class="infobox infobox-border">
+            <p>Asset Search</p>
+            <div>
+                <label for="">Name or ID:</label>
+                <input type="text" name="search" value="${pdict.CurrentHttpParameterMap.search.stringValue || ''}"/>
+                <button class="button">Find</button>
+            </div>
+        </div>
+    </form>
+    
+     
+    <table class="image-manager">
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <isloop items="${pdict.images}" var="file"> 
+           
+	            <tr>
+	            <isif condition="${file.type == 'image'}"> 
+	                <td><a href="${file.path}" rel="lightbox"><img src="${file.path}" style="width:100px" alt=""/></a></td>
+	             <iselse>
+	             	<td class="video"><a href="${file.path}" rel="lightbox"><img src="${pdict.cloudName + '/video/upload/t_media_lib_thumb/' + file.public_id.substring( 0, file.public_id.lastIndexOf('.') ) + '.jpg'}" style="width:100px" alt=""/></a></td>
+	             </isif>
+	                <td><a href="${file.path}"> ${file.public_id.substring( 0, file.public_id.lastIndexOf('.') )}</a></td>
+	                <td><a href=${dw.web.URLUtils.url('Cloudinary-Delete', "file", file.file, "id", file.public_id)} class="button">Delete</a></td>
+	            </tr>
+            
+            
+        </isloop>
+        </tbody>
+    </table>
+  
+   <isif condition="${pdict.pagination.showPagination}">
+	    <div class="im-nav-wrap">
+	        <ul class="im-nav">
+	        	<isif condition="${pdict.pagination.showPrev}">
+					<li class="im-nav__item"><a class="button" href="${dw.web.URLUtils.url('Cloudinary-ImageManager', 'actualPage', (pdict.pagination.actualPage - 1), 'search', (pdict.CurrentHttpParameterMap.search.stringValue || ''))}">Prev</a></li>
+				</isif>
+				<isif condition="${pdict.pagination.useDots}">
+				
+					<isloop items="${(pdict.pagination.listOfPages)}" var="pageNumber">
+		            	<isif condition="${pdict.pagination.actualPage == pageNumber}">
+							<li class='im-nav__item'><span class="button">${pageNumber.toString()}</span></li>
+						<iselseif condition="${pageNumber == 'dots'}" >
+							<li class='im-nav__item'>...</li>
+						<iselse>
+							<li class='im-nav__item'><a class="button" href="${dw.web.URLUtils.url('Cloudinary-ImageManager', 'actualPage', pageNumber.toString(), 'search', (pdict.CurrentHttpParameterMap.search.stringValue || ''))}">${pageNumber.toString()}</a></li>
+						</isif>
+					</isloop>
+					
+				<iselse>
+				
+		            <isloop status="i" begin="1" end="${(pdict.pagination.numberOfPages)*1}">
+		            	<isif condition="${pdict.pagination.actualPage == i.index}">
+							<li class='im-nav__item'><span class="button">${i.index}</span></li>
+						<iselse>
+							<li class='im-nav__item'><a class="button" href="${dw.web.URLUtils.url('Cloudinary-ImageManager', 'actualPage', i.index, 'search', (pdict.CurrentHttpParameterMap.search.stringValue || ''))}">${i.index}</a></li>
+						</isif>
+					</isloop>
+					
+				</isif>
+	            
+	            <isif condition="${pdict.pagination.showNext}">
+	            	<li class="im-nav__item"><a class="button" href="${dw.web.URLUtils.url('Cloudinary-ImageManager', 'actualPage', (pdict.pagination.actualPage + 1), 'search', (pdict.CurrentHttpParameterMap.search.stringValue || ''))}">Next</a></li>
+	            </isif>
+	        </ul>
+	    </div>
+	</isif>
+  
+</isdecorate>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+
+	<!-- upload -->
+	<field formid="file" type="string" mandatory="true" binding="file"/>
+
+	<action formid="submit" valid-form="false"></action>
+	
+</form>

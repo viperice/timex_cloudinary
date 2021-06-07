@@ -1,0 +1,51 @@
+<!--- TEMPLATENAME: transformation.isml --->
+
+<isdecorate template="application/MenuFrame">
+ <iscontent type="text/html" charset="UTF-8" />
+    <isinclude template="inc/Modules"/>
+    <isset name="instanceType" value="${require('dw/system/System').instanceType === 2 ? 'live' : 'test'}" scope="page"/>
+    <isset name="prefs" value="${URLUtils.url('SiteNavigationBar-ShowMenuitemOverview', 'CurrentMenuItemId', 'cloudinary-menu-item')}" scope="PAGE" />
+    <ISBreadcrumb name1="Cloudinary" url1="${prefs}" name2="Transformation Preview" />
+
+<style>
+        form {
+            padding-bottom: 10px;
+        }
+		.bold {
+			font-weight: bold;
+		}
+		.italic {
+			font-style: italic;
+		}
+</style>
+
+	<h1>Enter an Image ID (e.g. <span class="italic">Catalogs/apparel/images/large/g_1.jpg</span>) and click <span class="bold">Set</span></h1>
+	<form>
+		<input type="text" name="public_id" value="${pdict.CurrentHttpParameterMap.public_id.stringValue || ''}"/>
+	 	<button type="submit" class="button">Set</button>
+	</form>
+	
+	<h1> Enter <a href="https://cloudinary.com/documentation/image_transformation_reference" target="_blank">transformation</a> parameters and click <span class="bold">Preview</span> </h1>
+	
+	 	<form  method="GET">
+	        <div class="upload-section"> 
+	        	<input type="text" name="param" value="${pdict.CurrentHttpParameterMap.param.stringValue || ''}"/>
+	        	<input type="hidden" name="public_id" value="${pdict.CurrentHttpParameterMap.public_id.stringValue || false}">
+	            <button type="submit" class="button">Preview</button>
+	        </div>
+	    </form>
+	
+	<br/>
+	
+
+	<isif condition="${pdict.isImage}"> 
+		<isif condition="${pdict.params}"> 
+			<isset name="params" value="${pdict.params + '/'}" scope="page" />
+		</isif>
+		<img src="${pdict.cloudName + params + pdict.image}">
+	<iselse>
+		<h2> ${pdict.message}</h2>
+	</isif>
+
+
+</isdecorate>
